@@ -64,5 +64,7 @@ func commitAll() {
 		}
 		// delete transaction confirmation message
 		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.confirmMsg.MessageID))
+
+		go updateRecentKeyboard(v.ctx)
 	}
 }

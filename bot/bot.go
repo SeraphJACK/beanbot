@@ -70,22 +70,7 @@ func handleMessage(ctx *messageHandleContext) {
 	}
 
 	if msg.Command() == "recent" {
-		var btns [][]tgbotapi.KeyboardButton
-		for _, v := range recentCmds {
-			btns = append(btns, tgbotapi.NewKeyboardButtonRow(
-				tgbotapi.NewKeyboardButton(v.command),
-			))
-		}
-		msg := tgbotapi.NewMessage(ctx.chat.ID, "Recent Commands")
-		if len(btns) > 0 {
-			markup := tgbotapi.NewReplyKeyboard(btns...)
-			markup.OneTimeKeyboard = true
-			msg.ReplyMarkup = markup
-		}
-		_, err := ctx.bot.Send(msg)
-		if err != nil {
-			log.Printf("Failed to send recent menu: %v", err)
-		}
+		updateRecentKeyboard(ctx)
 		return
 	}
 
@@ -125,4 +110,24 @@ func handleMessage(ctx *messageHandleContext) {
 
 func handleCallbackQuery(query *tgbotapi.CallbackQuery) {
 	cancel(query.Data)
+}
+
+func updateRecentKeyboard(ctx *messageHandleContext) {
+	var btns [][]tgbotapi.KeyboardButton
+	for _, v := range recentCmds {
+		btns = append(btns, tgbotapi.NewKeyboardButtonRow(
+			tgbotapi.NewKeyboardButton(v.command),
+		))
+	}
+	msg := tgbotapi.NewMessage(ctx.chat.ID, "Recent Commands")
+	if len(btns) > 0 {
+		markup := tgbotapi.NewReplyKeyboard(btns...)
+		markup.OneTimeKeyboard = true
+		msg.ReplyMarkup = markup
+	}
+	_, err := ctx.bot.Send(msg)
+	if err != nil {
+		log.Printf("Failed to send recent menu: %v", err)
+	}
+	return
 }
