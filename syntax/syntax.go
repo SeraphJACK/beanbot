@@ -10,9 +10,9 @@ var ErrMissingPayee = errors.New("missing payee")
 var ErrUnknownAccount = errors.New("unknown account")
 
 type Config struct {
-	Currencies      []string
-	Accounts        map[string]string
-	DefaultCurrency string
+	Currencies      []string          `yaml:"currencies"`
+	Accounts        map[string]string `yaml:"accounts"`
+	DefaultCurrency string            `yaml:"defaultCurrency"`
 }
 
 func (c *Config) hasCurrency(cur string) bool {
