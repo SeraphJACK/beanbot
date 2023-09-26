@@ -21,6 +21,12 @@ func CommitTransaction(txn *syntax.Transaction) error {
 
 	fullBeanPath := path.Join(Path, beanPath)
 
+	// Commit bean txn
+	// First pull the repository so *hopefully* we won't conflict with someone else
+	if err := pull(); err != nil {
+		return err
+	}
+
 	// Write txn bean language to bean file
 	f, err := os.OpenFile(fullBeanPath, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
@@ -35,12 +41,7 @@ func CommitTransaction(txn *syntax.Transaction) error {
 		return err
 	}
 
-	// Commit bean txn
-	// First pull the repository so *hopefully* we won't conflict with someone else
-	if err := pull(); err != nil {
-		return err
-	}
-
+	// Worktree
 	w, err := repo.Worktree()
 	if err != nil {
 		return err
