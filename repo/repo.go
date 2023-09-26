@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"errors"
 	"os"
 
 	"git.s8k.top/SeraphJACK/beanbot/config"
@@ -42,7 +43,7 @@ func clone() error {
 
 func pull() error {
 	w, err := repo.Worktree()
-	if err != nil {
+	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
 		return err
 	}
 	return w.Pull(&git.PullOptions{Auth: &http.BasicAuth{
