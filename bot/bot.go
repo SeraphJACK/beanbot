@@ -24,32 +24,6 @@ func Start() error {
 		return err
 	}
 
-	// Polling message updates
-	go func() {
-		id := 0
-		for {
-			id++
-			u := tgbotapi.NewUpdate(id)
-			u.Timeout = 60
-
-			updates := bot.GetUpdatesChan(u)
-
-			for update := range updates {
-				if update.Message != nil {
-					ctx := &messageHandleContext{bot: bot, chat: update.Message.Chat, msg: update.Message}
-					go handleMessage(ctx)
-				}
-				if update.EditedMessage != nil {
-					ctx := &messageHandleContext{bot: bot, chat: update.Message.Chat, msg: update.EditedMessage}
-					go handleMessage(ctx)
-				}
-				if update.CallbackQuery != nil {
-					go handleCallback(update.CallbackQuery)
-				}
-			}
-		}
-	}()
-
 	// Watch for transactions that need to be committed
 	go func() {
 		for {
@@ -58,7 +32,29 @@ func Start() error {
 		}
 	}()
 
-	return nil
+	// Polling message updates
+	id := 0
+	for {
+		id++
+		u := tgbotapi.NewUpdate(id)
+		u.Timeout = 60
+
+		updates := bot.GetUpdatesChan(u)
+
+		for update := range updates {
+			if update.Message != nil {
+				ctx := &messageHandleContext{bot: bot, chat: update.Message.Chat, msg: update.Message}
+				go handleMessage(ctx)
+			}
+			if update.EditedMessage != nil {
+				ctx := &messageHandleContext{bot: bot, chat: update.Message.Chat, msg: update.EditedMessage}
+				go handleMessage(ctx)
+			}
+			if update.CallbackQuery != nil {
+				go handleCallback(update.CallbackQuery)
+			}
+		}
+	}
 }
 
 func handleMessage(ctx *messageHandleContext) {
