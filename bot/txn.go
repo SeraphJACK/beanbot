@@ -32,8 +32,12 @@ func cancel(id string) {
 	lock.Lock()
 	defer lock.Unlock()
 
-	if _, ok := aboutToCommitTxn[id]; ok {
+	if v, ok := aboutToCommitTxn[id]; ok {
 		delete(aboutToCommitTxn, id)
+		// delete transaction confirmation message
+		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.txmMsg.MessageID))
+		// delete transaction cancel callback message
+		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.callbackMsg.MessageID))
 	}
 }
 
