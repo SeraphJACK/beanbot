@@ -8,6 +8,7 @@ import (
 
 var ErrMissingPayee = errors.New("missing payee")
 var ErrUnknownAccount = errors.New("unknown account")
+var ErrEmptyTransaction = errors.New("no postings defined")
 
 type Config struct {
 	Currencies      []string          `yaml:"currencies"`
@@ -99,6 +100,10 @@ func Parse(tokens []string, cfg *Config) (*Transaction, error) {
 			return nil, err
 		}
 		txn.Postings = append(txn.Postings, p)
+	}
+
+	if len(txn.Postings) == 0 {
+		return nil, ErrEmptyTransaction
 	}
 
 	return txn, txn.Validate()
