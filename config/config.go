@@ -12,14 +12,18 @@ type Config struct {
 	Repo               string        `yaml:"repo"`
 	Username           string        `yaml:"username"`
 	Password           string        `yaml:"password"`
+	CommitAuthor       string        `yaml:"commitAuthor"`
+	CommitAuthorEmail  string        `yaml:"commitAuthorEmail"`
 	Syntax             syntax.Config `yaml:"syntax"`
 	TxnBeanPathPattern string        `yaml:"txnBeanPathPattern"`
 }
 
 var Cfg = Config{
-	Repo:     "https://git.xxx.com/xxx/xxx.git",
-	Username: "someone",
-	Password: "password",
+	Repo:              "https://git.xxx.com/xxx/xxx.git",
+	Username:          "someone",
+	Password:          "password",
+	CommitAuthor:      "Beanbot",
+	CommitAuthorEmail: "beanbot@example.com",
 	Syntax: syntax.Config{
 		Currencies:      []string{"CNY", "USD"},
 		Accounts:        map[string]string{"zfb": "Assets::Digital::Alipay"},

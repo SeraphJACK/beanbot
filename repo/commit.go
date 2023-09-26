@@ -9,6 +9,7 @@ import (
 	"git.s8k.top/SeraphJACK/beanbot/config"
 	"git.s8k.top/SeraphJACK/beanbot/syntax"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 )
 
@@ -18,7 +19,7 @@ func CommitTransaction(txn *syntax.Transaction) error {
 		return err
 	}
 
-	beanPath = path.Join(RepoPath, beanPath)
+	beanPath = path.Join(Path, beanPath)
 
 	// Write txn bean language to bean file
 	f, err := os.OpenFile(beanPath, os.O_RDWR|os.O_CREATE, 0644)
@@ -52,7 +53,13 @@ func CommitTransaction(txn *syntax.Transaction) error {
 	}
 
 	// Commit the staged changes
-	_, err = w.Commit("Beanbot auto commit txn "+time.Now().Format("2006-01-02 15:04:05"), &git.CommitOptions{})
+	_, err = w.Commit("Beanbot auto commit txn "+time.Now().Format("2006-01-02 15:04:05"), &git.CommitOptions{
+		Author: &object.Signature{
+			Name:  config.Cfg.CommitAuthor,
+			Email: config.Cfg.CommitAuthorEmail,
+			When:  time.Now(),
+		},
+	})
 	if err != nil {
 		return err
 	}

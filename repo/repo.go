@@ -8,19 +8,19 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 )
 
-const RepoPath = "./beancount"
+const Path = "./beancount"
 
 var repo *git.Repository
 
 func Init() error {
-	if _, err := os.Stat(RepoPath); err != nil {
+	if _, err := os.Stat(Path); err != nil {
 		// repo does not exist, clone it
 		if err := clone(); err != nil {
 			return err
 		}
 	} else {
 		// repo exists, just open it
-		repo, err = git.PlainOpen(RepoPath)
+		repo, err = git.PlainOpen(Path)
 		if err != nil {
 			return err
 		}
@@ -30,7 +30,7 @@ func Init() error {
 
 func clone() error {
 	var err error
-	repo, err = git.PlainClone(RepoPath, false, &git.CloneOptions{
+	repo, err = git.PlainClone(Path, false, &git.CloneOptions{
 		URL: config.Cfg.Repo,
 		Auth: &http.BasicAuth{
 			Username: config.Cfg.Username,
