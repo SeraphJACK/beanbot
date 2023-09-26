@@ -1,0 +1,80 @@
+kind: pipeline
+type: docker
+name: publish
+
+trigger:
+  event:
+    - push
+  ref:
+    - refs/heads/master
+
+steps:
+  - name: restore-cache
+    image: drillster/drone-volume-cache
+    pull: if-not-exists
+    settings:
+      restore: true
+      mount:
+        - /go
+        - /root/.cache/go-build
+    volumes:
+      - name: cache
+        path: /cache
+      - name: go
+        path: /go
+      - name: go-build
+        path: /root/.cache/go-build
+  - name: build
+    image: git.s8k.top/library/golang-gcc
+    environment:
+      GOPROXY: https://goproxy.cn,direct
+    pull: if-not-exists
+    depends_on:
+      - restore-cache
+    commands:
+      - go build -o app ./cmd
+    volumes:
+      - name: go
+        path: /go
+      - name: go-build
+        path: /root/.cache/go-build
+  - name: rebuild-cache
+    image: drillster/drone-volume-cache
+    pull: if-not-exists
+    depends_on:
+      - build
+    settings:
+      rebuild: true
+      mount:
+        - /go
+        - /root/.cache/go-build
+    volumes:
+      - name: cache
+        path: /cache
+      - name: go
+        path: /go
+      - name: go-build
+        path: /root/.cache/go-build
+
+  - name: docker
+    image: plugins/docker
+    pull: if-not-exists
+    depends_on:
+      - build
+    settings:
+      registry: git.s8k.top
+      username: SeraphJACK
+      password:
+        from_secret: gitea_token
+      repo: git.s8k.top/SeraphJACK/beanbot
+      tags:
+        - latest
+
+volumes:
+  - name: cache
+    host:
+      path: /var/lib/drone-runner/cache
+  - name: go
+    temp: { }
+  - name: go-build
+    temp: { }
