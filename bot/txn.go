@@ -12,6 +12,7 @@ import (
 
 type transaction struct {
 	ctx        *messageHandleContext
+	raw        string
 	txn        *syntax.Transaction
 	confirmMsg tgbotapi.Message
 	commitTime time.Time
@@ -47,6 +48,8 @@ func commitAll() {
 		if time.Now().Before(v.commitTime) {
 			continue
 		}
+
+		updateRecentCommand(v.raw)
 
 		err := repo.CommitTransaction(v.txn)
 		if err != nil {

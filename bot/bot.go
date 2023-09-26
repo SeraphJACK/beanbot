@@ -69,12 +69,29 @@ func handleMessage(ctx *messageHandleContext) {
 		return
 	}
 
-	if strings.HasPrefix(msg.Text, "/cancel") {
-		cancel(msg.CommandArguments())
+	if msg.Command() == "recent" {
+		var btns [][]tgbotapi.KeyboardButton
+		for _, v := range recentCmds {
+			btns = append(btns, tgbotapi.NewKeyboardButtonRow(
+				tgbotapi.NewKeyboardButton(v.command),
+			))
+		}
+		msg := tgbotapi.NewMessage(ctx.chat.ID, "Recent Commands")
+		if len(btns) > 0 {
+			markup := tgbotapi.NewReplyKeyboard(btns...)
+			markup.OneTimeKeyboard = true
+			msg.ReplyMarkup = markup
+		}
+		_, err := ctx.bot.Send(msg)
+		if err != nil {
+			log.Printf("Failed to send recent menu: %v", err)
+		}
 		return
 	}
 
-	txn, err := syntax.Parse(strings.Split(msg.Text, " "), &config.Cfg.Syntax)
+	raw := msg.Text
+
+	txn, err := syntax.Parse(strings.Split(raw, " "), &config.Cfg.Syntax)
 	if err != nil {
 		msg := tgbotapi.NewMessage(ctx.chat.ID, "Failed to parse txn syntax: "+err.Error())
 		go ctx.bot.Send(msg)
@@ -99,6 +116,7 @@ func handleMessage(ctx *messageHandleContext) {
 
 	aboutToCommit(txnID, &transaction{
 		ctx:        ctx,
+		raw:        raw,
 		txn:        txn,
 		confirmMsg: confirmMsg,
 		commitTime: time.Now().Add(10 * time.Second),
