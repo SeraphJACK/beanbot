@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"git.s8k.top/SeraphJACK/beanbot/config"
+	"git.s8k.top/SeraphJACK/beanbot/repo"
 	"github.com/spf13/pflag"
 	"gopkg.in/yaml.v3"
 )
@@ -24,6 +25,11 @@ func main() {
 
 	if err := config.Load(*confPath); err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
+		return
+	}
+
+	if err := repo.Init(); err != nil {
+		log.Fatalf("Failed to init beancount repository: %v", err)
 		return
 	}
 }
