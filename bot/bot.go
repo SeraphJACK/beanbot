@@ -47,7 +47,7 @@ func Start() error {
 				go handleMessage(ctx)
 			}
 			if update.EditedMessage != nil {
-				ctx := &messageHandleContext{bot: bot, chat: update.Message.Chat, msg: update.EditedMessage}
+				ctx := &messageHandleContext{bot: bot, chat: update.EditedMessage.Chat, msg: update.EditedMessage}
 				go handleMessage(ctx)
 			}
 			if update.CallbackQuery != nil {
