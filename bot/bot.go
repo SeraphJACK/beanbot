@@ -51,7 +51,7 @@ func Start() error {
 				go handleMessage(ctx)
 			}
 			if update.CallbackQuery != nil {
-				go handleCallback(update.CallbackQuery)
+				handleCallbackQuery(update.CallbackQuery)
 			}
 		}
 	}
@@ -69,6 +69,11 @@ func handleMessage(ctx *messageHandleContext) {
 		return
 	}
 
+	if strings.HasPrefix(msg.Text, "/cancel") {
+		cancel(msg.CommandArguments())
+		return
+	}
+
 	txn, err := syntax.Parse(strings.Split(msg.Text, " "), &config.Cfg.Syntax)
 	if err != nil {
 		msg := tgbotapi.NewMessage(ctx.chat.ID, "Failed to parse txn syntax: "+err.Error())
@@ -76,11 +81,15 @@ func handleMessage(ctx *messageHandleContext) {
 		return
 	}
 
+	txnID := uuid.New().String()
 	msgCfg := tgbotapi.NewMessage(ctx.chat.ID,
 		fmt.Sprintf("The following transaction is about to be committed:```\n%s\n```",
 			txn.ToBeanLanguageSyntax()),
 	)
 	msgCfg.ParseMode = tgbotapi.ModeMarkdown
+	msgCfg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup([]tgbotapi.InlineKeyboardButton{
+		tgbotapi.NewInlineKeyboardButtonData("Cancel", txnID),
+	})
 
 	confirmMsg, err := ctx.bot.Send(msgCfg)
 	if err != nil {
@@ -88,21 +97,14 @@ func handleMessage(ctx *messageHandleContext) {
 		return
 	}
 
-	txnID := uuid.New().String()
-	cbMsg, err := ctx.bot.Send(tgbotapi.NewCallback(txnID, "Cancel"))
-	if err != nil {
-		log.Printf("Failed to send cancel callback message: %v", err)
-		return
-	}
-
 	aboutToCommit(txnID, &transaction{
-		txn:         txn,
-		confirmMsg:  confirmMsg,
-		callbackMsg: cbMsg,
-		commitTime:  time.Now().Add(10 * time.Second),
+		ctx:        ctx,
+		txn:        txn,
+		confirmMsg: confirmMsg,
+		commitTime: time.Now().Add(10 * time.Second),
 	})
 }
 
-func handleCallback(query *tgbotapi.CallbackQuery) {
-	cancel(query.ID)
+func handleCallbackQuery(query *tgbotapi.CallbackQuery) {
+	cancel(query.Data)
 }

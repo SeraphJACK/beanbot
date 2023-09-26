@@ -11,11 +11,10 @@ import (
 )
 
 type transaction struct {
-	ctx         *messageHandleContext
-	txn         *syntax.Transaction
-	confirmMsg  tgbotapi.Message
-	callbackMsg tgbotapi.Message
-	commitTime  time.Time
+	ctx        *messageHandleContext
+	txn        *syntax.Transaction
+	confirmMsg tgbotapi.Message
+	commitTime time.Time
 }
 
 var lock sync.Mutex
@@ -36,8 +35,6 @@ func cancel(id string) {
 		delete(aboutToCommitTxn, id)
 		// delete transaction confirmation message
 		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.confirmMsg.MessageID))
-		// delete transaction cancel callback message
-		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.callbackMsg.MessageID))
 	}
 }
 
@@ -64,7 +61,5 @@ func commitAll() {
 		}
 		// delete transaction confirmation message
 		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.confirmMsg.MessageID))
-		// delete transaction cancel callback message
-		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.callbackMsg.MessageID))
 	}
 }

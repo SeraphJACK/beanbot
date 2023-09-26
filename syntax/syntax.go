@@ -85,7 +85,9 @@ func Parse(tokens []string, cfg *Config) (*Transaction, error) {
 	p, err := readPosting(r, cfg)
 	if err != nil {
 		// account does not exist, token is optional narration
-		txn.Narration = r.Next()
+		if r.HasNext() {
+			txn.Narration = r.Next()
+		}
 	} else {
 		txn.Postings = append(txn.Postings, p)
 	}
