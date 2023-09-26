@@ -86,7 +86,7 @@ func handleMessage(ctx *messageHandleContext) {
 	)
 	msgCfg.ParseMode = tgbotapi.ModeMarkdown
 
-	txnMsg, err := ctx.bot.Send(msgCfg)
+	confirmMsg, err := ctx.bot.Send(msgCfg)
 	if err != nil {
 		log.Printf("Failed to send txn confirmation message: %v", err)
 		return
@@ -101,7 +101,7 @@ func handleMessage(ctx *messageHandleContext) {
 
 	aboutToCommit(txnID, &transaction{
 		txn:         txn,
-		txmMsg:      txnMsg,
+		confirmMsg:  confirmMsg,
 		callbackMsg: cbMsg,
 		commitTime:  time.Now().Add(10 * time.Second),
 	})

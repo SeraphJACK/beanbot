@@ -13,7 +13,7 @@ import (
 type transaction struct {
 	ctx         *messageHandleContext
 	txn         *syntax.Transaction
-	txmMsg      tgbotapi.Message
+	confirmMsg  tgbotapi.Message
 	callbackMsg tgbotapi.Message
 	commitTime  time.Time
 }
@@ -35,7 +35,7 @@ func cancel(id string) {
 	if v, ok := aboutToCommitTxn[id]; ok {
 		delete(aboutToCommitTxn, id)
 		// delete transaction confirmation message
-		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.txmMsg.MessageID))
+		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.confirmMsg.MessageID))
 		// delete transaction cancel callback message
 		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.callbackMsg.MessageID))
 	}
@@ -63,7 +63,7 @@ func commitAll() {
 			go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.ctx.msg.MessageID))
 		}
 		// delete transaction confirmation message
-		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.txmMsg.MessageID))
+		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.confirmMsg.MessageID))
 		// delete transaction cancel callback message
 		go v.ctx.bot.Send(tgbotapi.NewDeleteMessage(v.ctx.chat.ID, v.callbackMsg.MessageID))
 	}
