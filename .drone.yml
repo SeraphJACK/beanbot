@@ -66,7 +66,7 @@ steps:
       username: SeraphJACK
       password:
         from_secret: gitea_token
-      repo: git.s8k.top/SeraphJACK/beanbot
+      repo: git.s8k.top/seraphjack/beanbot
       tags:
         - latest
 
