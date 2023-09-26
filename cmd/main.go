@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"git.s8k.top/SeraphJACK/beanbot/bot"
 	"git.s8k.top/SeraphJACK/beanbot/config"
 	"git.s8k.top/SeraphJACK/beanbot/repo"
 	"github.com/spf13/pflag"
@@ -30,6 +31,11 @@ func main() {
 
 	if err := repo.Init(); err != nil {
 		log.Fatalf("Failed to init beancount repository: %v", err)
+		return
+	}
+
+	if err := bot.Start(); err != nil {
+		log.Fatalf("Failed to start telegram bot: %v", err)
 		return
 	}
 }

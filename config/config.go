@@ -9,6 +9,8 @@ import (
 )
 
 type Config struct {
+	BotToken           string        `yaml:"botToken"`
+	AuthorizedUserIDs  []int64       `yaml:"authorizedUserIDs"`
 	Repo               string        `yaml:"repo"`
 	Username           string        `yaml:"username"`
 	Password           string        `yaml:"password"`
@@ -19,6 +21,8 @@ type Config struct {
 }
 
 var Cfg = Config{
+	BotToken:          "xxx",
+	AuthorizedUserIDs: []int64{},
 	Repo:              "https://git.xxx.com/xxx/xxx.git",
 	Username:          "someone",
 	Password:          "password",
