@@ -43,11 +43,15 @@ func clone() error {
 
 func pull() error {
 	w, err := repo.Worktree()
-	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
+	if err != nil {
 		return err
 	}
-	return w.Pull(&git.PullOptions{Auth: &http.BasicAuth{
+	err = w.Pull(&git.PullOptions{Auth: &http.BasicAuth{
 		Username: config.Cfg.Username,
 		Password: config.Cfg.Password,
 	}})
+	if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
+		return err
+	}
+	return nil
 }
