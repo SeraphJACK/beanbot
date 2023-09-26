@@ -1,0 +1,3 @@
+{{.Date}} {{.Flag}} "{{.Payee}}"{{if ne .Narration ""}} "{{.Narration}}"{{end}}
+{{range .Postings}}    {{if ne .Flag "*" }}{{.Flag}} {{end}}{{.Account}} {{printf "%.2f" .Amount}} {{.Currency}}
+{{end}}
