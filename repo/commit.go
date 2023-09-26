@@ -28,7 +28,7 @@ func CommitTransaction(txn *syntax.Transaction) error {
 	}
 
 	// Write txn bean language to bean file
-	f, err := os.OpenFile(fullBeanPath, os.O_RDWR|os.O_CREATE, 0644)
+	f, err := os.OpenFile(fullBeanPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		return err
 	}
