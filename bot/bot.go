@@ -69,7 +69,7 @@ func handleMessage(ctx *messageHandleContext) {
 		return
 	}
 
-	txn, err := syntax.Parse(strings.Split(msg.Text, ""), &config.Cfg.Syntax)
+	txn, err := syntax.Parse(strings.Split(msg.Text, " "), &config.Cfg.Syntax)
 	if err != nil {
 		msg := tgbotapi.NewMessage(ctx.chat.ID, "Failed to parse txn syntax: "+err.Error())
 		go ctx.bot.Send(msg)

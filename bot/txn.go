@@ -19,7 +19,7 @@ type transaction struct {
 }
 
 var lock sync.Mutex
-var aboutToCommitTxn map[string]*transaction
+var aboutToCommitTxn = make(map[string]*transaction)
 
 func aboutToCommit(id string, txn *transaction) {
 	lock.Lock()
