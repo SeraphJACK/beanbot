@@ -42,6 +42,6 @@ func updateRecentCommand(command string) {
 			recentCmds = recentCmds[:5]
 		}
 	} else {
-		sort.Sort(recentCmdSort(recentCmds))
+		sort.Sort(sort.Reverse(recentCmdSort(recentCmds)))
 	}
 }
