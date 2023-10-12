@@ -28,9 +28,9 @@ func (r recentCmdSort) Swap(i, j int) {
 
 func updateRecentCommand(command string) {
 	exists := false
-	for _, v := range recentCmds {
+	for idx, v := range recentCmds {
 		if v.command == command {
-			v.t = time.Now()
+			recentCmds[idx].t = time.Now()
 			exists = true
 			break
 		}
